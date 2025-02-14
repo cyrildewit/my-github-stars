@@ -1,12 +1,16 @@
 name: update awesome-stars
+
 on:
   workflow_dispatch:
   schedule:
   - cron: 0 0 * * 0 # At 00:00 on Sunday.
+
 jobs:
   awesome-stars:
     name: update awesome-stars
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python
