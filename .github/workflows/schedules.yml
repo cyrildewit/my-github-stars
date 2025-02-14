@@ -1,37 +1,26 @@
-name: update awesome-stars
+name: 'Update using Stargazed'
 
 on:
   workflow_dispatch:
   schedule:
-  - cron: 0 0 * * 0 # At 00:00 on Sunday.
+    - cron: 0 0 * * 0 # At 00:00 on Sunday.
 
 jobs:
-  awesome-stars:
-    name: update awesome-stars
+  build:
+    name: 'stargazed update'
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.13'
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install starred
-    - name: get repository name
-      run: echo "REPOSITORY_NAME=${GITHUB_REPOSITORY#*/}" >> $GITHUB_ENV
-    - name: update repo category by language
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        REPOSITORY: ${{ env.REPOSITORY_NAME }}
-        USERNAME: ${{ github.repository_owner }}
-      run: starred --username ${USERNAME} --repository ${REPOSITORY} --sort --token ${GITHUB_TOKEN} --message 'awesome-stars category by language update by github actions cron, created by starred'
-    - name: update repo category by topic
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        REPOSITORY: ${{ env.REPOSITORY_NAME }}
-        USERNAME: ${{ github.repository_owner }}
-      run: starred --username ${USERNAME} --repository ${REPOSITORY} --sort --token ${GITHUB_TOKEN} --message 'awesome-stars category by topic update by github actions cron, created by starred' --topic --topic_limit 500 --filename topics.md
+      - uses: actions/checkout@v4
+
+      - name: 'Use Node.js 14.x'
+        uses: actions/setup-node@v3
+        with:
+          node-version: 14.x
+
+      - name: 'Install Stargazed'
+        run: 'npm install --global stargazed'
+
+      - name: 'Update Repository'
+        env:
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+        run: 'stargazed --username  "cyrildewit" --token ${GITHUB_TOKEN} --repo "my-github-stars" --message "stargazed update by GitHub Actions Workflow" --sort'
